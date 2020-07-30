@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3692210798385045098}
   - component: {fileID: 3699068260279347670}
   - component: {fileID: 3710813911544527086}
+  - component: {fileID: 3641508675965433760}
   m_Layer: 0
   m_Name: RookDark
   m_TagString: Untagged
@@ -88,3 +89,16 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &3641508675965433760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3686676469134017986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f72d0f7d2946f0945b07f92989749a8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isLightSide: 0

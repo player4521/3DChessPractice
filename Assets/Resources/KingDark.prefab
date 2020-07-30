@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5791893988838719938}
   - component: {fileID: 5771760257278708510}
   - component: {fileID: 5781507738957252958}
+  - component: {fileID: 1060381484742225039}
   m_Layer: 0
   m_Name: KingDark
   m_TagString: Untagged
@@ -88,3 +89,16 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &1060381484742225039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5794006299341354964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85926cbd68a16844f8f0e9a8c27e72d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isLightSide: 0

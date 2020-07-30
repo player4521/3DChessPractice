@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5286488207760623587}
   - component: {fileID: 5276396456823467501}
   - component: {fileID: 5268749175316895667}
+  - component: {fileID: -546679468936436141}
   m_Layer: 0
   m_Name: PawnDark
   m_TagString: Untagged
@@ -88,3 +89,16 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &-546679468936436141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5281110223842177533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6c2842edc67a694fa906ad7621180f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isLightSide: 0

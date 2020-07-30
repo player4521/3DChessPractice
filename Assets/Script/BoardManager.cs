@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class BoardManager : MonoBehaviour
 {
+    public Chessman[,] Chessmans { set; get; }
+    private Chessman selectedChessman;
+
     private const float TILE_SIZE = 1.0f;
     private const float TILE_OFFSET = 0.5f;
 
@@ -18,6 +22,8 @@ public class BoardManager : MonoBehaviour
     private Quaternion orientationWhite = Quaternion.Euler(0, 0, 0);
     private Quaternion orientationDark = Quaternion.Euler(0, 180, 0);
 
+    public bool isLightTurn = true;
+
     private void Start()
     {
         SpawnAllChessmans();
@@ -26,6 +32,50 @@ public class BoardManager : MonoBehaviour
     {
         UpdateSelection();
         DrawChessboard();
+
+        // マウスの右クリック
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (selectionX >= 0 && selectionY >= 0)
+            {
+                if (selectedChessman == null)
+                {
+                    // 駒を選択
+                    SelectChessman(selectionX, selectionY);
+                }
+                else
+                {
+                    // 駒を移動
+                    MoveChessman(selectionX, selectionY);
+                }
+            }
+        }
+    }
+
+    // 
+    private void SelectChessman(int x, int y)
+    {
+        if (Chessmans[x, y] = null)
+            return;
+
+        if (Chessmans[x, y].isLightSide != isLightTurn)
+            return;
+
+        selectedChessman = Chessmans[x, y];
+    }
+
+    private void MoveChessman(int x, int y)
+    {
+        if (selectedChessman.PossibleMove(x, y))
+        {
+            Chessmans[selectedChessman.CurrentX, selectedChessman.CurrentY] = null;
+
+            selectedChessman.transform.position = GetTileCenter(x, y);
+            //Chessman[x, y] = selectedChessman;
+
+        }
+
+        selectedChessman = null;
     }
 
     private void UpdateSelection()
@@ -49,10 +99,12 @@ public class BoardManager : MonoBehaviour
     }
 
     // 駒の召喚
-    private void SpawnChessman(int index, Vector3 position, Quaternion orientation)
+    private void SpawnChessman(int index, int x, int y, Quaternion orientation)
     {
-        GameObject go = Instantiate(chessmanPrefabs[index], position, orientation) as GameObject;
+        GameObject go = Instantiate(chessmanPrefabs[index], GetTileCenter(x,y), orientation) as GameObject;
         go.transform.SetParent(transform);
+        Chessmans[x, y] = go.GetComponent<Chessman>();
+        Chessmans[x, y].SetPosition(x, y);
         activeChessman.Add(go);
     }
 
@@ -60,45 +112,46 @@ public class BoardManager : MonoBehaviour
     private void SpawnAllChessmans()
     {
         activeChessman = new List<GameObject>();
+        Chessmans = new Chessman[8, 8];
 
         // Light Team
         // King
-        SpawnChessman(0, GetTileCenter(3, 0), orientationWhite);
+        SpawnChessman(0, 3, 0, orientationWhite);
         // Queen
-        SpawnChessman(1, GetTileCenter(4, 0), orientationWhite);
+        SpawnChessman(1, 4, 0, orientationWhite);
         // rooks
-        SpawnChessman(2, GetTileCenter(0, 0), orientationWhite);
-        SpawnChessman(2, GetTileCenter(7, 0), orientationWhite);
+        SpawnChessman(2, 0, 0, orientationWhite);
+        SpawnChessman(2, 7, 0, orientationWhite);
         // bishops
-        SpawnChessman(3, GetTileCenter(2, 0), orientationWhite);
-        SpawnChessman(3, GetTileCenter(5, 0), orientationWhite);
+        SpawnChessman(3, 2, 0, orientationWhite);
+        SpawnChessman(3, 5, 0, orientationWhite);
         // Knights
-        SpawnChessman(4, GetTileCenter(1, 0), orientationWhite);
-        SpawnChessman(4, GetTileCenter(6, 0), orientationWhite);
+        SpawnChessman(4, 1, 0, orientationWhite);
+        SpawnChessman(4, 6, 0, orientationWhite);
         // Pawns
         for (int i = 0; i < 8; i++)
         {
-            SpawnChessman(5, GetTileCenter(i, 1), orientationWhite);
+            SpawnChessman(5, i, 1, orientationWhite);
         }
 
         // Dark Team
         // King
-        SpawnChessman(6, GetTileCenter(3, 7), orientationDark);
+        SpawnChessman(6, 3, 7, orientationDark);
         // Queen
-        SpawnChessman(7, GetTileCenter(4, 7), orientationDark);
+        SpawnChessman(7, 4, 7, orientationDark);
         // rooks
-        SpawnChessman(8, GetTileCenter(0, 7), orientationDark);
-        SpawnChessman(8, GetTileCenter(7, 7), orientationDark);
+        SpawnChessman(8, 0, 7, orientationDark);
+        SpawnChessman(8, 7, 7, orientationDark);
         // bishops
-        SpawnChessman(9, GetTileCenter(2, 7), orientationDark);
-        SpawnChessman(9, GetTileCenter(5, 7), orientationDark);
+        SpawnChessman(9, 2, 7, orientationDark);
+        SpawnChessman(9, 5, 7, orientationDark);
         // Knights
-        SpawnChessman(10, GetTileCenter(1, 7), orientationDark);
-        SpawnChessman(10, GetTileCenter(6, 7), orientationDark);
+        SpawnChessman(10, 1, 7, orientationDark);
+        SpawnChessman(10, 6, 7, orientationDark);
         // Pawns
         for (int i = 0; i < 8; i++)
         {
-            SpawnChessman(11, GetTileCenter(i, 6), orientationDark);
+            SpawnChessman(11, i, 6, orientationDark);
         }
     }
     // タイルのセンターを取得
