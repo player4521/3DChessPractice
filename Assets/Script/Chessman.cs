@@ -16,7 +16,11 @@ public abstract class Chessman : MonoBehaviour
 
     public virtual bool PossibleMove(int x, int y)
     {
-        return true;
+        if (x == 8 && y == 8)
+        {
+            return true;
+        }
+        return false;
     }
 
 }

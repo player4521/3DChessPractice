@@ -6,6 +6,9 @@ using UnityEngine.Rendering;
 
 public class BoardManager : MonoBehaviour
 {
+    public static BoardManager Instance { set; get; }
+    private bool allowedMoves { set; get; }
+
     public Chessman[,] Chessmans { set; get; }
     private Chessman selectedChessman;
 
@@ -61,17 +64,20 @@ public class BoardManager : MonoBehaviour
         if (Chessmans[x, y].isLightSide != isLightTurn)
             return;
 
+        allowedMoves = Chessmans[x, y].PossibleMove(8, 8);
         selectedChessman = Chessmans[x, y];
+        BoardHighlights.Instance.HighlightAllowedMoves(allowedMoves);
     }
 
     private void MoveChessman(int x, int y)
     {
-        if (selectedChessman.PossibleMove(x, y))
+        if (selectedChessman.PossibleMove(x,y))
         {
             Chessmans[selectedChessman.CurrentX, selectedChessman.CurrentY] = null;
 
             selectedChessman.transform.position = GetTileCenter(x, y);
             //Chessman[x, y] = selectedChessman;
+            isLightTurn = !isLightTurn;
 
         }
 
