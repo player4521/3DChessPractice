@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 public class BoardManager : MonoBehaviour
 {
     public static BoardManager Instance { set; get; }
-    private bool allowedMoves { set; get; }
+    private bool[,] allowedMoves { set; get; }
 
     public Chessman[,] Chessmans { set; get; }
     private Chessman selectedChessman;
@@ -22,13 +22,14 @@ public class BoardManager : MonoBehaviour
     private List<GameObject> activeChessman;
 
     // 駒の方向を調節
-    private Quaternion orientationWhite = Quaternion.Euler(0, 0, 0);
+    private Quaternion orientationLight = Quaternion.Euler(0, 0, 0);
     private Quaternion orientationDark = Quaternion.Euler(0, 180, 0);
 
     public bool isLightTurn = true;
 
     private void Start()
     {
+        Instance = this;
         SpawnAllChessmans();
     }
     private void Update()
@@ -41,6 +42,7 @@ public class BoardManager : MonoBehaviour
         {
             if (selectionX >= 0 && selectionY >= 0)
             {
+                // 選択された駒が居ない場合
                 if (selectedChessman == null)
                 {
                     // 駒を選択
@@ -55,32 +57,34 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    // 
+    // 駒を選択
     private void SelectChessman(int x, int y)
     {
-        if (Chessmans[x, y] = null)
+        if (Chessmans[x, y] == null)
             return;
 
         if (Chessmans[x, y].isLightSide != isLightTurn)
             return;
 
-        allowedMoves = Chessmans[x, y].PossibleMove(8, 8);
+        allowedMoves = Chessmans[x, y].PossibleMove();
         selectedChessman = Chessmans[x, y];
         BoardHighlights.Instance.HighlightAllowedMoves(allowedMoves);
     }
 
+    // 駒を移動
     private void MoveChessman(int x, int y)
     {
-        if (selectedChessman.PossibleMove(x,y))
+        // x,yに移動できる場合
+        if (allowedMoves[x,y])
         {
             Chessmans[selectedChessman.CurrentX, selectedChessman.CurrentY] = null;
-
             selectedChessman.transform.position = GetTileCenter(x, y);
-            //Chessman[x, y] = selectedChessman;
+            selectedChessman.SetPosition(x, y);
+            Chessmans[x, y] = selectedChessman;
             isLightTurn = !isLightTurn;
-
         }
 
+        BoardHighlights.Instance.HideHighlights();
         selectedChessman = null;
     }
 
@@ -91,7 +95,10 @@ public class BoardManager : MonoBehaviour
             return;
         }
 
+        // 衝突が感知された領域
         RaycastHit hit;
+
+        // マウスの近くにオブジェクトがあるかを確認
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 25.0f, LayerMask.GetMask("ChessPlane")))
         {
             selectionX = (int)hit.point.x;
@@ -122,22 +129,22 @@ public class BoardManager : MonoBehaviour
 
         // Light Team
         // King
-        SpawnChessman(0, 3, 0, orientationWhite);
+        SpawnChessman(0, 3, 0, orientationLight);
         // Queen
-        SpawnChessman(1, 4, 0, orientationWhite);
+        SpawnChessman(1, 4, 0, orientationLight);
         // rooks
-        SpawnChessman(2, 0, 0, orientationWhite);
-        SpawnChessman(2, 7, 0, orientationWhite);
+        SpawnChessman(2, 0, 0, orientationLight);
+        SpawnChessman(2, 7, 0, orientationLight);
         // bishops
-        SpawnChessman(3, 2, 0, orientationWhite);
-        SpawnChessman(3, 5, 0, orientationWhite);
+        SpawnChessman(3, 2, 0, orientationLight);
+        SpawnChessman(3, 5, 0, orientationLight);
         // Knights
-        SpawnChessman(4, 1, 0, orientationWhite);
-        SpawnChessman(4, 6, 0, orientationWhite);
+        SpawnChessman(4, 1, 0, orientationLight);
+        SpawnChessman(4, 6, 0, orientationLight);
         // Pawns
         for (int i = 0; i < 8; i++)
         {
-            SpawnChessman(5, i, 1, orientationWhite);
+            SpawnChessman(5, i, 1, orientationLight);
         }
 
         // Dark Team

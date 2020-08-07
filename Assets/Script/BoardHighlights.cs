@@ -28,13 +28,13 @@ public class BoardHighlights : MonoBehaviour
     }
 
     // 移動可能なところを表示
-    public void HighlightAllowedMoves(bool moves)
+    public void HighlightAllowedMoves(bool[,] moves)
     {
         for (int i = 0;i < 8; i++)
         {
             for (int j = 0; j < 8; j++)
             {
-                if (moves)
+                if (moves[i,j])
                 {
                     GameObject go = GetHighlightObject();
                     go.SetActive(true);
@@ -44,6 +44,7 @@ public class BoardHighlights : MonoBehaviour
         }
     }
 
+    // ハイライトを隠す
     public void HideHighlights()
     {
         foreach (GameObject go in highlights)
