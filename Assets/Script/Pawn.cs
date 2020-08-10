@@ -80,7 +80,7 @@ public class Pawn : Chessman
                 }
             }
 
-            if (CurrentY == 1)
+            if (CurrentY == 6)
             {
                 c = BoardManager.Instance.Chessmans[CurrentX, CurrentY - 1];
                 c2 = BoardManager.Instance.Chessmans[CurrentX, CurrentY - 2];

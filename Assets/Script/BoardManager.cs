@@ -77,6 +77,21 @@ public class BoardManager : MonoBehaviour
         // x,yに移動できる場合
         if (allowedMoves[x,y])
         {
+            Chessman c = Chessmans[x, y];
+            
+            if (c != null && c.isLightSide != isLightTurn)
+            {
+                // Kingの場合はゲーム終了
+                if (c.GetType() == typeof(King))
+                {
+                    return;
+                }
+
+                // King以外の場合は削除
+                activeChessman.Remove(c.gameObject);
+                Destroy(c.gameObject);
+            }
+
             Chessmans[selectedChessman.CurrentX, selectedChessman.CurrentY] = null;
             selectedChessman.transform.position = GetTileCenter(x, y);
             selectedChessman.SetPosition(x, y);
