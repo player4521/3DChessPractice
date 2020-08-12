@@ -7,7 +7,11 @@ public class Pawn : Chessman
     public override bool[,] PossibleMove()
     {
         bool[,] r = new bool[8, 8];
-        Chessman c, c2;
+        
+        // 1セル移動用変数
+        Chessman c;
+        // 2セル移動用変数
+        Chessman c2;
 
         // LightSide
         if (isLightSide)
@@ -39,6 +43,7 @@ public class Pawn : Chessman
                 }
             }
 
+            // スタート地点の場合
             if (CurrentY == 1)
             {
                 c = BoardManager.Instance.Chessmans[CurrentX, CurrentY + 1];
@@ -80,6 +85,7 @@ public class Pawn : Chessman
                 }
             }
 
+            // スタート地点の場合
             if (CurrentY == 6)
             {
                 c = BoardManager.Instance.Chessmans[CurrentX, CurrentY - 1];
