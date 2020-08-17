@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 public class BoardManager : MonoBehaviour
 {
     public static BoardManager Instance { set; get; }
-    private bool[,] allowedMoves { set; get; }
+    private bool[,] AllowedMoves { set; get; }
 
     public Chessman[,] Chessmans { set; get; }
     private Chessman selectedChessman;
@@ -42,10 +42,11 @@ public class BoardManager : MonoBehaviour
         {
             if (selectionX >= 0 && selectionY >= 0)
             {
-                // 選択された駒が居ない場合
+                
+                            // 選択された駒が居ない場合
                 if (selectedChessman == null)
                 {
-                    // 駒を選択
+                                   // 駒を選択
                     SelectChessman(selectionX, selectionY);
                 }
                 else
@@ -66,22 +67,23 @@ public class BoardManager : MonoBehaviour
         if (Chessmans[x, y].isLightSide != isLightTurn)
             return;
 
-        allowedMoves = Chessmans[x, y].PossibleMove();
+        AllowedMoves = Chessmans[x, y].PossibleMove();
         selectedChessman = Chessmans[x, y];
-        BoardHighlights.Instance.HighlightAllowedMoves(allowedMoves);
+        BoardHighlights.Instance.HighlightAllowedMoves(AllowedMoves);
     }
 
     // 駒を移動
     private void MoveChessman(int x, int y)
     {
         // x,yに移動できる場合
-        if (allowedMoves[x,y])
+        if (AllowedMoves[x, y])
         {
             Chessman c = Chessmans[x, y];
-            
+
             if (c != null && c.isLightSide != isLightTurn)
             {
-                // Kingの場合はゲーム終了
+                
+                            // Kingの場合はゲーム終了
                 if (c.GetType() == typeof(King))
                 {
                     return;
@@ -129,7 +131,7 @@ public class BoardManager : MonoBehaviour
     // 駒の召喚
     private void SpawnChessman(int index, int x, int y, Quaternion orientation)
     {
-        GameObject go = Instantiate(chessmanPrefabs[index], GetTileCenter(x,y), orientation) as GameObject;
+        GameObject go = Instantiate(chessmanPrefabs[index], GetTileCenter(x, y), orientation) as GameObject;
         go.transform.SetParent(transform);
         Chessmans[x, y] = go.GetComponent<Chessman>();
         Chessmans[x, y].SetPosition(x, y);
