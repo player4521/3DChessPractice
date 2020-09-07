@@ -86,6 +86,7 @@ public class BoardManager : MonoBehaviour
                             // Kingの場合はゲーム終了
                 if (c.GetType() == typeof(King))
                 {
+                    EndGame();
                     return;
                 }
 
@@ -221,5 +222,26 @@ public class BoardManager : MonoBehaviour
                 Vector3.forward * (selectionY + 1) + Vector3.right * selectionX,
                 Vector3.forward * selectionY + Vector3.right * (selectionX + 1));
         }
+    }
+
+    private void EndGame()
+    {
+        if (isLightTurn)
+        {
+            Debug.Log("Light team wins");
+        }
+        else
+        {
+            Debug.Log("Dark team wins");
+        }
+
+        foreach (GameObject go in activeChessman)
+        {
+            Destroy(go);
+        }
+
+        isLightTurn = true;
+        BoardHighlights.Instance.HideHighlights();
+        SpawnAllChessmans();
     }
 }
