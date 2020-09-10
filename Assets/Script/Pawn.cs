@@ -7,17 +7,24 @@ public class Pawn : Chessman
     public override bool[,] PossibleMove()
     {
         bool[,] r = new bool[8, 8];
-        
+
         // 1セル移動用変数
         Chessman c;
         // 2セル移動用変数
         Chessman c2;
+
+        int[] e = BoardManager.Instance.EnPassantMove;
 
         // LightSide
         if (isLightSide)
         {
             if (CurrentX != 0 && CurrentY != 7)
             {
+                if (e[0] == CurrentX - 1 && e[1] == CurrentY + 1)
+                {
+                    r[CurrentX - 1, CurrentY + 1] = true;
+                }
+
                 c = BoardManager.Instance.Chessmans[CurrentX - 1, CurrentY + 1];
                 if (c != null && !c.isLightSide)
                 {
@@ -27,6 +34,11 @@ public class Pawn : Chessman
 
             if (CurrentX != 7 && CurrentY != 7)
             {
+                if (e[0] == CurrentX - 1 && e[1] == CurrentY + 1)
+                {
+                    r[CurrentX + 1, CurrentY + 1] = true;
+                }
+
                 c = BoardManager.Instance.Chessmans[CurrentX + 1, CurrentY + 1];
                 if (c != null && !c.isLightSide)
                 {
@@ -34,7 +46,7 @@ public class Pawn : Chessman
                 }
             }
 
-            if(CurrentY != 7)
+            if (CurrentY != 7)
             {
                 c = BoardManager.Instance.Chessmans[CurrentX, CurrentY + 1];
                 if (c == null)
@@ -48,7 +60,7 @@ public class Pawn : Chessman
             {
                 c = BoardManager.Instance.Chessmans[CurrentX, CurrentY + 1];
                 c2 = BoardManager.Instance.Chessmans[CurrentX, CurrentY + 2];
-                if (c == null && c2==null)
+                if (c == null && c2 == null)
                 {
                     r[CurrentX, CurrentY + 2] = true;
                 }
@@ -60,6 +72,11 @@ public class Pawn : Chessman
         {
             if (CurrentX != 0 && CurrentY != 7)
             {
+                if (e[0] == CurrentX - 1 && e[1] == CurrentY - 1)
+                {
+                    r[CurrentX - 1, CurrentY - 1] = true;
+                }
+
                 c = BoardManager.Instance.Chessmans[CurrentX - 1, CurrentY - 1];
                 if (c != null && c.isLightSide)
                 {
@@ -69,6 +86,11 @@ public class Pawn : Chessman
 
             if (CurrentX != 7 && CurrentY != 0)
             {
+                if (e[0] == CurrentX + 1 && e[1] == CurrentY - 1)
+                {
+                    r[CurrentX + 1, CurrentY - 1] = true;
+                }
+
                 c = BoardManager.Instance.Chessmans[CurrentX + 1, CurrentY - 1];
                 if (c != null && c.isLightSide)
                 {

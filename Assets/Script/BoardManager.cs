@@ -21,6 +21,11 @@ public class BoardManager : MonoBehaviour
     public List<GameObject> chessmanPrefabs;
     private List<GameObject> activeChessman;
 
+    private Material previousMat;
+    public Material selectedMat;
+
+    public int[] EnPassantMove { set; get; }
+
     // 駒の方向を調節
     private Quaternion orientationLight = Quaternion.Euler(0, 0, 0);
     private Quaternion orientationDark = Quaternion.Euler(0, 180, 0);
@@ -42,11 +47,11 @@ public class BoardManager : MonoBehaviour
         {
             if (selectionX >= 0 && selectionY >= 0)
             {
-                
-                            // 選択された駒が居ない場合
+
+                // 選択された駒が居ない場合
                 if (selectedChessman == null)
                 {
-                                   // 駒を選択
+                    // 駒を選択
                     SelectChessman(selectionX, selectionY);
                 }
                 else
@@ -67,8 +72,28 @@ public class BoardManager : MonoBehaviour
         if (Chessmans[x, y].isLightSide != isLightTurn)
             return;
 
+        bool hasAtleastOneMove = false;
         AllowedMoves = Chessmans[x, y].PossibleMove();
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                if (AllowedMoves[i, j])
+                {
+                    hasAtleastOneMove = true;
+                }
+            }
+        }
+
+        if (!hasAtleastOneMove)
+        {
+            return;
+        }
+
         selectedChessman = Chessmans[x, y];
+        previousMat = selectedChessman.GetComponent<MeshRenderer>().material;
+        selectedMat.mainTexture = previousMat.mainTexture;
+        selectedChessman.GetComponent<MeshRenderer>().material = selectedMat;
         BoardHighlights.Instance.HighlightAllowedMoves(AllowedMoves);
     }
 
@@ -82,8 +107,8 @@ public class BoardManager : MonoBehaviour
 
             if (c != null && c.isLightSide != isLightTurn)
             {
-                
-                            // Kingの場合はゲーム終了
+
+                // Kingの場合はゲーム終了
                 if (c.GetType() == typeof(King))
                 {
                     EndGame();
@@ -95,6 +120,50 @@ public class BoardManager : MonoBehaviour
                 Destroy(c.gameObject);
             }
 
+            if (x == EnPassantMove[0] && y == EnPassantMove[1])
+            {
+                if (isLightTurn)
+                {
+                    c = Chessmans[x, y - 1];
+                }
+                else
+                {
+                    c = Chessmans[x, y - 1];
+                }
+                activeChessman.Remove(c.gameObject);
+                Destroy(c.gameObject);
+            }
+
+            EnPassantMove[0] = -1;
+            EnPassantMove[1] = -1;
+            if (selectedChessman.GetType() == typeof(Pawn))
+            {
+                if (y == 7)
+                {
+                    activeChessman.Remove(selectedChessman.gameObject);
+                    Destroy(selectedChessman);
+                    SpawnChessman(1, x, y, orientationLight);
+                    selectedChessman = Chessmans[x, y];
+                }
+                else if (y == 0)
+                {
+                    activeChessman.Remove(selectedChessman.gameObject);
+                    Destroy(selectedChessman);
+                    SpawnChessman(7, x, y, orientationDark);
+                }
+
+                if (selectedChessman.CurrentY == 1 && y == 3)
+                {
+                    EnPassantMove[0] = x;
+                    EnPassantMove[1] = y - 1;
+                }
+                else if (selectedChessman.CurrentY == 6 && y == 4)
+                {
+                    EnPassantMove[0] = x;
+                    EnPassantMove[1] = y + 1;
+                }
+            }
+
             Chessmans[selectedChessman.CurrentX, selectedChessman.CurrentY] = null;
             selectedChessman.transform.position = GetTileCenter(x, y);
             selectedChessman.SetPosition(x, y);
@@ -102,6 +171,7 @@ public class BoardManager : MonoBehaviour
             isLightTurn = !isLightTurn;
         }
 
+        selectedChessman.GetComponent<MeshRenderer>().material = previousMat;
         BoardHighlights.Instance.HideHighlights();
         selectedChessman = null;
     }
@@ -144,6 +214,7 @@ public class BoardManager : MonoBehaviour
     {
         activeChessman = new List<GameObject>();
         Chessmans = new Chessman[8, 8];
+        EnPassantMove = new int[2] { -1, -1 };
 
         // Light Team
         // King
